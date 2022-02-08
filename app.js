@@ -2,8 +2,8 @@ const express = require('express');
 const BodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const { celebrate, Joi, Segments } = require('celebrate');
 const cors = require('cors');
+const { errors } = require('celebrate');
 const route = require('./routes');
 const limiter = require('./utils/limiter');
 const { MONGO_SERVER } = require('./utils/constants');
@@ -13,6 +13,7 @@ const auth = require('./middleware/auth');
 const handleErr = require('./middleware/handle-err');
 require('dotenv').config();
 const { requestLogger, errorLogger } = require('./middleware/logger');
+const { createUserValidator, loginValidator } = require('./middleware/valid');
 
 const { PORT = 3000 } = process.env;
 
@@ -26,32 +27,15 @@ app.use(helmet());
 app.use(express.json());
 app.use(requestLogger);
 
-app.post(
-  '/signup',
-  celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
-      name: Joi.string().required(),
-    }),
-  }),
-  createUser,
-);
-app.post(
-  '/signin',
-  celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
-    }),
-  }),
-  login,
-);
+app.post('/signup', createUserValidator, createUser);
+app.post('/signin', loginValidator, login);
 app.use(auth);
 app.use('/', route);
 app.use(limiter);
 app.use(errorLogger);
+app.use(errors());
 app.use(handleErr);
+
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
 });
