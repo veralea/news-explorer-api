@@ -6,7 +6,7 @@ const cors = require('cors');
 const { errors } = require('celebrate');
 const route = require('./routes');
 const limiter = require('./utils/limiter');
-const { MONGO_SERVER } = require('./utils/constants');
+const { MONGO_SERVER, MONGO_LOCAL } = require('./utils/confiq');
 const { createUser } = require('./controllers/createUser');
 const { login } = require('./controllers/login');
 const auth = require('./middleware/auth');
@@ -15,13 +15,13 @@ require('dotenv').config();
 const { requestLogger, errorLogger } = require('./middleware/logger');
 const { createUserValidator, loginValidator } = require('./middleware/valid');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, NODE_ENV = 'development' } = process.env;
 
 const app = express();
 app.use(BodyParser.json());
 app.use(cors());
 app.options('*', cors());
-mongoose.connect(MONGO_SERVER);
+mongoose.connect(NODE_ENV !== 'production' ? MONGO_LOCAL : MONGO_SERVER);
 
 app.use(helmet());
 app.use(express.json());

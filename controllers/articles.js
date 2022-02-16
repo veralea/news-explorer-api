@@ -2,6 +2,10 @@ const Article = require('../models/article');
 const {
   CREATED_CODE,
   SUCCESS_CODE,
+  NOT_FOUND_ERROR_MESSAGE_ARTICLE,
+  DATA_ERROR_MESSAGE,
+  RIGHTS_ERROR_MESSAGE,
+  RIGHTS_ERROR_MESSAGE_DELETE,
 } = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-err');
 const RightsError = require('../errors/rights-err');
@@ -11,7 +15,7 @@ const getAllArticles = (req, res, next) => {
   Article.find({})
     .then((articles) => {
       if (!articles) {
-        throw new RightsError('no rights to receive all cards');
+        throw new RightsError(RIGHTS_ERROR_MESSAGE);
       }
       res.status(SUCCESS_CODE).send(articles);
     })
@@ -28,7 +32,7 @@ const createArticle = (req, res, next) => {
   })
     .then((article) => {
       if (!article) {
-        throw new DataError('Invalid new article data');
+        throw new DataError(DATA_ERROR_MESSAGE);
       }
       res.status(CREATED_CODE).send(article);
     })
@@ -38,14 +42,15 @@ const createArticle = (req, res, next) => {
 const deleteArticle = (req, res, next) => {
   const { articleId } = req.params;
 
-  Article.findByIdAndRemove(articleId).select('+owner')
+  Article.findById(articleId).select('+owner')
     .then((article) => {
-      if (article.owner.valueOf() !== req.user._id) {
-        throw new RightsError("This article isn't belongs to this user");
-      }
       if (!article) {
-        throw new NotFoundError('No article found with that id');
+        throw new NotFoundError(NOT_FOUND_ERROR_MESSAGE_ARTICLE);
       }
+      if (article.owner.valueOf() !== req.user._id) {
+        throw new RightsError(RIGHTS_ERROR_MESSAGE_DELETE);
+      }
+      article.remove();
       res.status(SUCCESS_CODE).send({ data: article });
     })
     .catch(next);

@@ -3,7 +3,14 @@ const NOT_FOUND_ERROR_CODE = 404;
 const VALID_ERROR_CODE = 400;
 const CREATED_CODE = 201;
 const SUCCESS_CODE = 200;
-const MONGO_SERVER = 'mongodb://veralea:O4GFBh7JmyLBq6saYIA2jdFz8afKlxzGUHHTaeiX1hukJ3taZ24A0u9FYt1rANKJ89bTpHbnsUwb1YHgGWcp5w==@veralea.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@veralea@';
+
+const EXIST_ERROR_MESSAGE = 'User already exists';
+const AUTH_ERROR_MESSAGE = 'Invalid email or password';
+const NOT_FOUND_ERROR_MESSAGE_USER = 'No user found with that id';
+const NOT_FOUND_ERROR_MESSAGE_ARTICLE = 'No article found with that id';
+const DATA_ERROR_MESSAGE = 'Invalid new article data';
+const RIGHTS_ERROR_MESSAGE = 'No rights to receive all cards';
+const RIGHTS_ERROR_MESSAGE_DELETE = 'This article isn\'t belongs to this user';
 
 module.exports = {
   INTERNAL_SERVER_ERROR_CODE,
@@ -11,5 +18,11 @@ module.exports = {
   VALID_ERROR_CODE,
   CREATED_CODE,
   SUCCESS_CODE,
-  MONGO_SERVER,
+  EXIST_ERROR_MESSAGE,
+  AUTH_ERROR_MESSAGE,
+  NOT_FOUND_ERROR_MESSAGE_USER,
+  NOT_FOUND_ERROR_MESSAGE_ARTICLE,
+  DATA_ERROR_MESSAGE,
+  RIGHTS_ERROR_MESSAGE,
+  RIGHTS_ERROR_MESSAGE_DELETE,
 };
