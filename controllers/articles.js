@@ -12,7 +12,7 @@ const RightsError = require('../errors/rights-err');
 const DataError = require('../errors/data-err');
 
 const getAllArticles = (req, res, next) => {
-  Article.find({})
+  Article.find({owner: req.user._id})
     .then((articles) => {
       if (!articles) {
         throw new RightsError(RIGHTS_ERROR_MESSAGE);
